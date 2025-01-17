@@ -1,0 +1,20 @@
+apiVersion: gateway.kyma-project.io/v1alpha1
+kind: RateLimit
+metadata:
+  labels:
+    app.kubernetes.io/name: ratelimit
+    app.kubernetes.io/instance: ratelimit-sample
+    app.kubernetes.io/part-of: api-gateway
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: api-gateway
+  name: ratelimit-{{.TestID}}
+spec:
+  selectorLabels:
+    app: httpbin
+  enableResponseHeaders: true
+  local:
+    defaultBucket:
+      maxTokens: 5
+      tokensPerFill: 5
+      fillInterval: 5s
+

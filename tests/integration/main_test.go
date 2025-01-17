@@ -2,6 +2,7 @@ package api_gateway
 
 import (
 	"context"
+	ratelimit "github.com/kyma-project/api-gateway/tests/integration/testsuites/rate-limit"
 	"log"
 	"os"
 	"testing"
@@ -93,6 +94,15 @@ func TestV2alpha1(t *testing.T) {
 		t.Fatalf("unable to switch to Ory jwtHandler")
 	}
 	defer cleanUp(ts, originalJwtHandler)
+	runTestsuite(t, ts)
+}
+
+func TestRateLimit(t *testing.T) {
+	ts, err := testcontext.New(ratelimit.NewTestsuite)
+	if err != nil {
+		t.Fatalf("Failed to create ratelimit testsuite %s", err.Error())
+	}
+	defer ts.TearDown()
 	runTestsuite(t, ts)
 }
 
