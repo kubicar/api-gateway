@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 	gatewayv1beta1 "github.com/kyma-project/api-gateway/apis/gateway/v1beta1"
-
 	"github.com/kyma-project/api-gateway/internal/helpers"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	apinetworkingv1beta1 "istio.io/api/networking/v1beta1"
+	networkingv1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -27,6 +28,33 @@ var _ = Describe("Resource status", Serial, func() {
 
 		It("should return nil for resources not supported by the handler ", func() {
 			// given
+
+			gateway := networkingv1beta1.Gateway{
+				ObjectMeta: metav1.ObjectMeta{Name: "kyma-gateway", Namespace: "kyma-system"},
+				Spec: apinetworkingv1beta1.Gateway{
+					Servers: []*apinetworkingv1beta1.Server{
+						{
+							Port: &apinetworkingv1beta1.Port{
+								Protocol: "HTTPS",
+							},
+							Hosts: []string{
+								"*.local.kyma.dev",
+							},
+						},
+						{
+							Port: &apinetworkingv1beta1.Port{
+								Protocol: "HTTP",
+							},
+							Hosts: []string{
+								"*.local.kyma.dev",
+							},
+						},
+					},
+				},
+			}
+
+			Expect(c.Create(context.Background(), &gateway)).Should(Succeed())
+
 			updateJwtHandlerTo(helpers.JWT_HANDLER_ORY)
 
 			apiRuleName := generateTestName(testNameBase, testIDLength)
@@ -41,8 +69,8 @@ var _ = Describe("Resource status", Serial, func() {
 			Expect(c.Create(context.Background(), svc)).Should(Succeed())
 			Expect(c.Create(context.Background(), instance)).Should(Succeed())
 			defer func() {
-				apiRuleTeardown(instance)
-				serviceTeardown(svc)
+				deleteResource(instance)
+				deleteResource(svc)
 			}()
 
 			// then
@@ -80,8 +108,8 @@ var _ = Describe("Resource status", Serial, func() {
 			Expect(c.Create(context.Background(), svc)).Should(Succeed())
 			Expect(c.Create(context.Background(), instance)).Should(Succeed())
 			defer func() {
-				apiRuleTeardown(instance)
-				serviceTeardown(svc)
+				deleteResource(instance)
+				deleteResource(svc)
 			}()
 
 			// then
@@ -126,8 +154,8 @@ var _ = Describe("Resource status", Serial, func() {
 			Expect(c.Create(context.Background(), svc)).Should(Succeed())
 			Expect(c.Create(context.Background(), instance)).Should(Succeed())
 			defer func() {
-				apiRuleTeardown(instance)
-				serviceTeardown(svc)
+				deleteResource(instance)
+				deleteResource(svc)
 			}()
 
 			// then
@@ -164,8 +192,8 @@ var _ = Describe("Resource status", Serial, func() {
 			Expect(c.Create(context.Background(), svc)).Should(Succeed())
 			Expect(c.Create(context.Background(), instance)).Should(Succeed())
 			defer func() {
-				apiRuleTeardown(instance)
-				serviceTeardown(svc)
+				deleteResource(instance)
+				deleteResource(svc)
 			}()
 
 			// then

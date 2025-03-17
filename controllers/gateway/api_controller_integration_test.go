@@ -14,6 +14,7 @@ import (
 
 	gomegatypes "github.com/onsi/gomega/types"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/utils/ptr"
 
 	"encoding/json"
@@ -71,8 +72,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 			Expect(c.Create(context.Background(), svc)).Should(Succeed())
 			Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 			defer func() {
-				apiRuleTeardown(apiRule)
-				serviceTeardown(svc)
+				deleteResource(apiRule)
+				deleteResource(svc)
 			}()
 
 			expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusError)
@@ -151,9 +152,9 @@ var _ = Describe("APIRule Controller", Serial, func() {
 			Expect(c.Create(context.Background(), svc)).Should(Succeed())
 			Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 			defer func() {
-				apiRuleTeardown(apiRule)
-				serviceTeardown(svc)
-				kymaGatewayTeardown(&gateway)
+				deleteResource(apiRule)
+				deleteResource(svc)
+				deleteResource(&gateway)
 			}()
 
 			expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -202,8 +203,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 			Expect(c.Create(context.Background(), svc)).Should(Succeed())
 			Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 			defer func() {
-				apiRuleTeardown(apiRule)
-				serviceTeardown(svc)
+				deleteResource(apiRule)
+				deleteResource(svc)
 			}()
 
 			expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -236,7 +237,7 @@ var _ = Describe("APIRule Controller", Serial, func() {
 			svcNew := testService(newServiceName, testNamespace, newServicePort)
 			Expect(c.Create(context.Background(), svcNew)).Should(Succeed())
 			defer func() {
-				serviceTeardown(svcNew)
+				deleteResource(svcNew)
 			}()
 
 			Expect(c.Update(context.Background(), &existingInstance)).Should(Succeed())
@@ -277,8 +278,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 						Expect(c.Create(context.Background(), svc)).Should(Succeed())
 						Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 						defer func() {
-							apiRuleTeardown(apiRule)
-							serviceTeardown(svc)
+							deleteResource(apiRule)
+							deleteResource(svc)
 						}()
 
 						expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -380,8 +381,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 							Expect(c.Create(context.Background(), svc)).Should(Succeed())
 							Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 							defer func() {
-								apiRuleTeardown(apiRule)
-								serviceTeardown(svc)
+								deleteResource(apiRule)
+								deleteResource(svc)
 							}()
 
 							expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -522,8 +523,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 							Expect(c.Create(context.Background(), svc)).Should(Succeed())
 							Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 							defer func() {
-								apiRuleTeardown(apiRule)
-								serviceTeardown(svc)
+								deleteResource(apiRule)
+								deleteResource(svc)
 							}()
 
 							expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -651,8 +652,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 							Expect(c.Create(context.Background(), svc)).Should(Succeed())
 							Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 							defer func() {
-								apiRuleTeardown(apiRule)
-								serviceTeardown(svc)
+								deleteResource(apiRule)
+								deleteResource(svc)
 							}()
 
 							Eventually(func(g Gomega) {
@@ -726,8 +727,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 					Expect(c.Create(context.Background(), svc)).Should(Succeed())
 					Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 					defer func() {
-						apiRuleTeardown(apiRule)
-						serviceTeardown(svc)
+						deleteResource(apiRule)
+						deleteResource(svc)
 					}()
 
 					expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -773,8 +774,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 					Expect(c.Create(context.Background(), svc)).Should(Succeed())
 					Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 					defer func() {
-						apiRuleTeardown(apiRule)
-						serviceTeardown(svc)
+						deleteResource(apiRule)
+						deleteResource(svc)
 					}()
 
 					expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -830,8 +831,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 						Expect(c.Create(context.Background(), svc)).Should(Succeed())
 						Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 						defer func() {
-							apiRuleTeardown(apiRule)
-							serviceTeardown(svc)
+							deleteResource(apiRule)
+							deleteResource(svc)
 						}()
 
 						expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -962,8 +963,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 								Expect(c.Create(context.Background(), svc)).Should(Succeed())
 								Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 								defer func() {
-									apiRuleTeardown(apiRule)
-									serviceTeardown(svc)
+									deleteResource(apiRule)
+									deleteResource(svc)
 								}()
 
 								expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -1035,8 +1036,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 					Expect(c.Create(context.Background(), svc)).Should(Succeed())
 					Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 					defer func() {
-						apiRuleTeardown(apiRule)
-						serviceTeardown(svc)
+						deleteResource(apiRule)
+						deleteResource(svc)
 					}()
 
 					expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -1072,8 +1073,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 					Expect(c.Create(context.Background(), svc)).Should(Succeed())
 					Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 					defer func() {
-						apiRuleTeardown(apiRule)
-						serviceTeardown(svc)
+						deleteResource(apiRule)
+						deleteResource(svc)
 					}()
 
 					expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -1121,8 +1122,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 					Expect(c.Create(context.Background(), svc)).Should(Succeed())
 					Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 					defer func() {
-						apiRuleTeardown(apiRule)
-						serviceTeardown(svc)
+						deleteResource(apiRule)
+						deleteResource(svc)
 					}()
 
 					By("Waiting until reconciliation of API Rule has finished")
@@ -1160,8 +1161,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 					Expect(c.Create(context.Background(), svc)).Should(Succeed())
 					Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 					defer func() {
-						apiRuleTeardown(apiRule)
-						serviceTeardown(svc)
+						deleteResource(apiRule)
+						deleteResource(svc)
 					}()
 
 					By("Waiting until reconciliation of API Rule has finished")
@@ -1220,8 +1221,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1243,8 +1244,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1267,8 +1268,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1290,8 +1291,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1309,8 +1310,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				err := c.Create(context.Background(), apiRule)
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 
 				Expect(err).Should(HaveOccurred())
@@ -1332,8 +1333,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				err := c.Create(context.Background(), apiRule)
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 
 				Expect(err).Should(HaveOccurred())
@@ -1359,8 +1360,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				err := c.Create(context.Background(), apiRule)
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 
 				Expect(err).Should(HaveOccurred())
@@ -1383,8 +1384,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				err := c.Create(context.Background(), apiRule)
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 				Expect(err).Should(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("spec.hosts: Too many: 2: must have at most 1 items"))
@@ -1406,8 +1407,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1425,8 +1426,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				err := c.Create(context.Background(), apiRule)
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 				Expect(err).Should(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("spec.gateway: Invalid value: \"string\": Gateway must be in the namespace/name format"))
@@ -1474,8 +1475,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1495,8 +1496,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1516,8 +1517,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1540,8 +1541,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1564,8 +1565,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				err := c.Create(context.Background(), apiRule)
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 				Expect(err).Should(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("spec.hosts[0]: Too long: may not be longer than 255"))
@@ -1585,8 +1586,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(c.Create(context.Background(), svc)).Should(Succeed())
 				err := c.Create(context.Background(), apiRule)
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 				Expect(err).Should(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("spec.hosts[0]: Invalid value: \"string\": Host must be a lowercase RFC 1123 label (must consist of lowercase alphanumeric characters or '-', and must start and end with an lowercase alphanumeric character) or a fully qualified domain name"))
@@ -1655,8 +1656,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				Expect(err).Should(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("spec.rules[0].path: Invalid value: \"/img*\": spec.rules[0].path"))
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1677,8 +1678,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				// when then
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 
@@ -1699,8 +1700,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 				// when then
 				Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 				defer func() {
-					apiRulev2alpha1Teardown(apiRule)
-					serviceTeardown(svc)
+					deleteResource(apiRule)
+					deleteResource(svc)
 				}()
 			})
 		})
@@ -1745,8 +1746,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 		Expect(c.Create(context.Background(), svc)).Should(Succeed())
 		Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 		defer func() {
-			apiRuleTeardown(apiRule)
-			serviceTeardown(svc)
+			deleteResource(apiRule)
+			deleteResource(svc)
 		}()
 
 		expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusError)
@@ -1755,7 +1756,7 @@ var _ = Describe("APIRule Controller", Serial, func() {
 		verifyVirtualServiceCount(c, apiRuleLabelMatcher, 0)
 
 		By("Deleting existing virtual service with duplicated host configuration")
-		deleteVirtualService(vs)
+		deleteResource(vs)
 
 		By("Waiting until APIRule is reconciled after error")
 		expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -1782,8 +1783,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 		Expect(c.Create(context.Background(), svc)).Should(Succeed())
 		Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 		defer func() {
-			apiRuleTeardown(apiRule)
-			serviceTeardown(svc)
+			deleteResource(apiRule)
+			deleteResource(svc)
 		}()
 
 		expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -1834,8 +1835,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 		Expect(c.Create(context.Background(), svc)).Should(Succeed())
 		Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 		defer func() {
-			apiRuleTeardown(apiRule)
-			serviceTeardown(svc)
+			deleteResource(apiRule)
+			deleteResource(svc)
 		}()
 
 		expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -1889,8 +1890,8 @@ var _ = Describe("APIRule Controller", Serial, func() {
 		Expect(c.Create(context.Background(), svc)).Should(Succeed())
 		Expect(c.Create(context.Background(), apiRule)).Should(Succeed())
 		defer func() {
-			apiRuleTeardown(apiRule)
-			serviceTeardown(svc)
+			deleteResource(apiRule)
+			deleteResource(svc)
 		}()
 
 		expectApiRuleStatus(apiRuleName, gatewayv1beta1.StatusOK)
@@ -1900,7 +1901,7 @@ var _ = Describe("APIRule Controller", Serial, func() {
 		verifyRequestAuthenticationCount(c, apiRuleNameMatchingLabels, 1)
 		verifyAuthorizationPolicyCount(c, apiRuleNameMatchingLabels, 1)
 
-		deleteApiRule(apiRule)
+		Expect(c.Delete(context.Background(), apiRule)).Should(Succeed())
 
 		By("Verifying resources are deleted")
 		verifyVirtualServiceCount(c, apiRuleNameMatchingLabels, 0)
@@ -2283,72 +2284,17 @@ func getAuthorizationPolicyWhenScopeMatcher(firstScope, secondScope string) gome
 		}))
 }
 
-func deleteApiRule(apiRule *gatewayv1beta1.APIRule) {
-	By(fmt.Sprintf("Deleting ApiRule %s", apiRule.Name))
-	Expect(c.Delete(context.Background(), apiRule)).Should(Succeed())
-	Eventually(func(g Gomega) {
-		a := gatewayv1beta1.APIRule{}
-		err := c.Get(context.Background(), client.ObjectKey{Name: apiRule.Name, Namespace: testNamespace}, &a)
-		g.Expect(errors.IsNotFound(err)).To(BeTrue())
-	}, eventuallyTimeout).Should(Succeed())
-}
-
-func apiRuleTeardown(apiRule *gatewayv1beta1.APIRule) {
-	By(fmt.Sprintf("Deleting ApiRule %s as part of teardown", apiRule.Name))
-	err := c.Delete(context.Background(), apiRule)
+func deleteResource(object client.Object) {
+	By(fmt.Sprintf("Deleting resource  %s/%s as part of teardown", object.GetObjectKind(), object.GetName()))
+	err := c.Delete(context.Background(), object)
 
 	if err != nil {
 		Expect(errors.IsNotFound(err)).To(BeTrue())
 	}
 
 	Eventually(func(g Gomega) {
-		a := gatewayv1beta1.APIRule{}
-		err := c.Get(context.Background(), client.ObjectKey{Name: apiRule.Name, Namespace: testNamespace}, &a)
-		g.Expect(errors.IsNotFound(err)).To(BeTrue())
-	}, eventuallyTimeout).Should(Succeed())
-}
-
-func apiRulev2alpha1Teardown(apiRule *gatewayv2alpha1.APIRule) {
-	By(fmt.Sprintf("Deleting ApiRule %s as part of teardown", apiRule.Name))
-	err := c.Delete(context.Background(), apiRule)
-
-	if err != nil {
-		Expect(errors.IsNotFound(err)).To(BeTrue())
-	}
-
-	Eventually(func(g Gomega) {
-		a := gatewayv2alpha1.APIRule{}
-		err := c.Get(context.Background(), client.ObjectKey{Name: apiRule.Name, Namespace: testNamespace}, &a)
-		g.Expect(errors.IsNotFound(err)).To(BeTrue())
-	}, eventuallyTimeout).Should(Succeed())
-}
-
-func serviceTeardown(svc *corev1.Service) {
-	By(fmt.Sprintf("Deleting Service %s as part of teardown", svc.Name))
-	err := c.Delete(context.Background(), svc)
-
-	if err != nil {
-		Expect(errors.IsNotFound(err)).To(BeTrue())
-	}
-
-	Eventually(func(g Gomega) {
-		a := corev1.Service{}
-		err := c.Get(context.Background(), client.ObjectKey{Name: svc.Name, Namespace: testNamespace}, &a)
-		g.Expect(errors.IsNotFound(err)).To(BeTrue())
-	}, eventuallyTimeout).Should(Succeed())
-}
-
-func kymaGatewayTeardown(gateway *networkingv1beta1.Gateway) {
-	By(fmt.Sprintf("Deleting Kyma Gateway %s as part of teardown", gateway.Name))
-	err := c.Delete(context.Background(), gateway)
-
-	if err != nil {
-		Expect(errors.IsNotFound(err)).To(BeTrue())
-	}
-
-	Eventually(func(g Gomega) {
-		a := gatewayv1beta1.APIRule{}
-		err := c.Get(context.Background(), client.ObjectKey{Name: gateway.Name, Namespace: gateway.Namespace}, &a)
+		u := unstructured.Unstructured{}
+		err := c.Get(context.Background(), client.ObjectKeyFromObject(object), &u)
 		g.Expect(errors.IsNotFound(err)).To(BeTrue())
 	}, eventuallyTimeout).Should(Succeed())
 }
@@ -2360,16 +2306,6 @@ func expectApiRuleStatus(apiRuleName string, statusCode gatewayv1beta1.StatusCod
 		g.Expect(c.Get(context.Background(), client.ObjectKey{Name: apiRuleName, Namespace: testNamespace}, &expectedApiRule)).Should(Succeed())
 		g.Expect(expectedApiRule.Status.APIRuleStatus).NotTo(BeNil())
 		g.Expect(expectedApiRule.Status.APIRuleStatus.Code).To(Equal(statusCode))
-	}, eventuallyTimeout).Should(Succeed())
-}
-
-func deleteVirtualService(vs *networkingv1beta1.VirtualService) {
-	By(fmt.Sprintf("Deleting virtual service %s", vs.Name))
-	Expect(c.Delete(context.Background(), vs)).Should(Succeed())
-	Eventually(func(g Gomega) {
-		v := networkingv1beta1.VirtualService{}
-		err := c.Get(context.Background(), client.ObjectKey{Name: vs.Name, Namespace: testNamespace}, &v)
-		g.Expect(errors.IsNotFound(err)).To(BeTrue())
 	}, eventuallyTimeout).Should(Succeed())
 }
 

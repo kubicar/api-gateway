@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/kyma-project/api-gateway/internal/metrics"
+	"k8s.io/utils/ptr"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -91,6 +92,7 @@ var _ = BeforeSuite(func(specCtx SpecContext) {
 
 	By("Bootstrapping test environment")
 	testEnv = &envtest.Environment{
+		UseExistingCluster: ptr.To(true),
 		CRDDirectoryPaths: []string{
 			filepath.FromSlash("../../config/crd/bases"),
 			filepath.FromSlash("../../hack/crds"),
