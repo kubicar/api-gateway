@@ -1989,6 +1989,9 @@ func testApiRule(name, namespace, serviceName, serviceNamespace, serviceHost str
 			},
 			Rules: rules,
 		},
+		Status: gatewayv1beta1.APIRuleStatus{
+			APIRuleStatus: nil,
+		},
 	}
 }
 

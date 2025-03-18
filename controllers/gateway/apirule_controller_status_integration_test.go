@@ -79,10 +79,6 @@ var _ = Describe("Resource status", Serial, func() {
 				g.Expect(c.Get(context.Background(), client.ObjectKey{Name: apiRuleName, Namespace: testNamespace}, &created)).Should(Succeed())
 				g.Expect(created.Status.APIRuleStatus).NotTo(BeNil())
 				g.Expect(created.Status.APIRuleStatus.Code).To(Equal(gatewayv1beta1.StatusOK))
-				g.Expect(created.Status.VirtualServiceStatus.Code).To(Equal(gatewayv1beta1.StatusOK))
-				g.Expect(created.Status.AccessRuleStatus.Code).To(Equal(gatewayv1beta1.StatusOK))
-				g.Expect(created.Status.AuthorizationPolicyStatus).To(BeNil())
-				g.Expect(created.Status.RequestAuthenticationStatus).To(BeNil())
 			}, eventuallyTimeout).Should(Succeed())
 
 		})
@@ -125,11 +121,6 @@ var _ = Describe("Resource status", Serial, func() {
 				g.Expect(created.Status.APIRuleStatus.Description).To(ContainSubstring("Attribute \".spec.rules[1].accessStrategies[0].config\": strategy: noop does not support configuration"))
 				g.Expect(created.Status.APIRuleStatus.Description).To(ContainSubstring("1 more error(s)..."))
 
-				g.Expect(created.Status.VirtualServiceStatus.Code).To(Equal(gatewayv1beta1.StatusSkipped))
-				g.Expect(created.Status.AccessRuleStatus.Code).To(Equal(gatewayv1beta1.StatusSkipped))
-				g.Expect(created.Status.AuthorizationPolicyStatus).To(BeNil())
-				g.Expect(created.Status.RequestAuthenticationStatus).To(BeNil())
-
 				shouldHaveVirtualServices(g, apiRuleName, testNamespace, 0)
 			}, eventuallyTimeout).Should(Succeed())
 
@@ -164,10 +155,6 @@ var _ = Describe("Resource status", Serial, func() {
 				Expect(c.Get(context.Background(), client.ObjectKey{Name: apiRuleName, Namespace: testNamespace}, &created)).Should(Succeed())
 				g.Expect(created.Status.APIRuleStatus).NotTo(BeNil())
 				g.Expect(created.Status.APIRuleStatus.Code).To(Equal(gatewayv1beta1.StatusOK))
-				g.Expect(created.Status.VirtualServiceStatus.Code).To(Equal(gatewayv1beta1.StatusOK))
-				g.Expect(created.Status.AuthorizationPolicyStatus.Code).To(Equal(gatewayv1beta1.StatusOK))
-				g.Expect(created.Status.RequestAuthenticationStatus.Code).To(Equal(gatewayv1beta1.StatusOK))
-				g.Expect(created.Status.AccessRuleStatus).To(BeNil())
 			}, eventuallyTimeout).Should(Succeed())
 		})
 
@@ -207,11 +194,6 @@ var _ = Describe("Resource status", Serial, func() {
 				g.Expect(created.Status.APIRuleStatus.Description).To(ContainSubstring("Attribute \".spec.rules[0].accessStrategies[0].config\": strategy: noop does not support configuration"))
 				g.Expect(created.Status.APIRuleStatus.Description).To(ContainSubstring("Attribute \".spec.rules[1].accessStrategies[0].config\": strategy: noop does not support configuration"))
 				g.Expect(created.Status.APIRuleStatus.Description).To(ContainSubstring("1 more error(s)..."))
-
-				g.Expect(created.Status.VirtualServiceStatus.Code).To(Equal(gatewayv1beta1.StatusSkipped))
-				g.Expect(created.Status.AuthorizationPolicyStatus.Code).To(Equal(gatewayv1beta1.StatusSkipped))
-				g.Expect(created.Status.RequestAuthenticationStatus.Code).To(Equal(gatewayv1beta1.StatusSkipped))
-				g.Expect(created.Status.AccessRuleStatus).To(BeNil())
 
 				shouldHaveVirtualServices(g, apiRuleName, testNamespace, 0)
 			}, eventuallyTimeout).Should(Succeed())

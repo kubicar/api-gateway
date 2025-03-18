@@ -10,9 +10,9 @@ import (
 	"time"
 
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/controller-runtime/pkg/conversion"
 
 	"github.com/kyma-project/api-gateway/apis/gateway/v2alpha1"
+	"sigs.k8s.io/controller-runtime/pkg/conversion"
 )
 
 const (
@@ -53,11 +53,7 @@ func (r *APIRule) ConvertTo(hub conversion.Hub) error {
 
 	apiRule.Annotations[v1beta1RulesAnnotationKey] = string(marshaledRules)
 
-	apiRule.Status = v2alpha1.APIRuleStatus{
-		LastProcessedTime: r.Status.LastProcessedTime,
-		State:             v1beta1toV2alpha1StatusConversionMap[r.Status.APIRuleStatus.Code],
-		Description:       r.Status.APIRuleStatus.Description,
-	}
+	apiRule.Status = convertV1beta1StatusToV2alpha1Status(r.Status)
 
 	err = convertOverJson(r.Spec.Gateway, &apiRule.Spec.Gateway)
 	if err != nil {
@@ -90,7 +86,6 @@ func (r *APIRule) ConvertTo(hub conversion.Hub) error {
 		host := v2alpha1.Host(*r.Spec.Host)
 		apiRule.Spec.Hosts = []*v2alpha1.Host{&host}
 	}
-
 	convertible, err := isConvertible(r)
 	if err != nil {
 		return err
@@ -152,6 +147,23 @@ func (r *APIRule) ConvertTo(hub conversion.Hub) error {
 	}
 
 	return nil
+}
+
+func convertV1beta1StatusToV2alpha1Status(state APIRuleStatus) v2alpha1.APIRuleStatus {
+
+	if state.APIRuleStatus != nil {
+		return v2alpha1.APIRuleStatus{
+			State:             v1beta1toV2alpha1StatusConversionMap[state.APIRuleStatus.Code],
+			Description:       state.APIRuleStatus.Description,
+			LastProcessedTime: state.LastProcessedTime,
+		}
+	}
+
+	return v2alpha1.APIRuleStatus{
+		State:             v2alpha1.Processing,
+		Description:       "",
+		LastProcessedTime: state.LastProcessedTime,
+	}
 }
 
 // ConvertFrom converts from the Hub version (v2alpha1) into this APIRule (v1beta1)
