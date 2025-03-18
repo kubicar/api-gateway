@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
 	gatewayv1beta1 "github.com/kyma-project/api-gateway/apis/gateway/v1beta1"
+	gatewayv2 "github.com/kyma-project/api-gateway/apis/gateway/v2"
 	gatewayv2alpha1 "github.com/kyma-project/api-gateway/apis/gateway/v2alpha1"
 	"github.com/kyma-project/api-gateway/controllers"
 	"github.com/kyma-project/api-gateway/controllers/gateway"
