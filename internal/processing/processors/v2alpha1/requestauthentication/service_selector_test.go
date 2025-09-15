@@ -147,17 +147,17 @@ var _ = Describe("Service has custom selector", func() {
 		// then
 		Expect(err).To(BeNil())
 		Expect(result).To(HaveLen(2))
-		ra1 := result[0].Obj.(*securityv1beta1.RequestAuthentication)
 
+		ra1 := result[0].Obj.(*securityv1beta1.RequestAuthentication)
 		Expect(ra1).NotTo(BeNil())
 		Expect(ra1.Spec.Selector.MatchLabels).To(HaveLen(2))
-		Expect(ra1.Spec.Selector.MatchLabels).To(HaveKeyWithValue("custom", serviceName))
+		Expect(ra1.Spec.Selector.MatchLabels).To(HaveKeyWithValue("custom", "example-service-1"))
 		Expect(ra1.Spec.Selector.MatchLabels).To(HaveKeyWithValue("second-custom", "foo-1"))
-		ra2 := result[1].Obj.(*securityv1beta1.RequestAuthentication)
 
+		ra2 := result[1].Obj.(*securityv1beta1.RequestAuthentication)
 		Expect(ra2).NotTo(BeNil())
 		Expect(ra2.Spec.Selector.MatchLabels).To(HaveLen(2))
-		Expect(ra2.Spec.Selector.MatchLabels).To(HaveKeyWithValue("custom", serviceName))
+		Expect(ra2.Spec.Selector.MatchLabels).To(HaveKeyWithValue("custom", "example-service-2"))
 		Expect(ra2.Spec.Selector.MatchLabels).To(HaveKeyWithValue("second-custom", "foo-2"))
 	})
 })
